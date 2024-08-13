@@ -8,7 +8,11 @@ const userLoginSchema = new mongoose.Schema({
     profileImg:{type : String},
     profileThumbImg:{type : String},
     isDeleted:{type : Boolean, default : false},
-    isAdmin:{type: Boolean}
+    isAdmin:{type: Boolean},
+    cart: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref : 'Cart'
+    }
 },{
     timestamps : true,
 });
