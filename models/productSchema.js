@@ -6,7 +6,7 @@ const productSchema = new mongoose.Schema({
     price: { type: Number},
     image:{type: String},
     category: { type: String},
-    isDeleted: { type: Boolean}
+    isDeleted: { type: Boolean }
 },{
     timestamps: true
 });
