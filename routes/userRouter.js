@@ -108,7 +108,7 @@ userRouter.post('/:id/cart', async (req, res) => {
 userRouter.get('/:id/cart', async (req, res) => {
     try {
         const userId = req.params.id;
-        const cart = await cartSchema.findOne({ userId })
+        const cart = await cartSchema.findOne({ userId }).populate('products.productId')
 
         if (!cart) {
             res.status(400).json({ message: `Cart not found` });
@@ -149,15 +149,33 @@ userRouter.post('/:id/wishlist', async (req, res) => {
 userRouter.get('/:id/wishlist', async (req, res) => {
     try {
         const userId = req.params.id;
-        const wishlist = await wishSchema.findOne({ userId });
+        const wishlist = await wishSchema.findOne({ userId }).populate('products.productId');
 
         if (!wishlist) {
-            res.status(400).json({ message: `You don't have any Wish list` })
+            return res.status(400).json({ message: `You don't have any Wish list` })
         }
-        res.status(200).json(`Your loved items are here ${wishlist.products}`);
+        res.status(200).json(wishlist.products);
     } catch (error) {
         res.status(400).json({ message: `Sever error` });
     }
+})
+
+// Deleting from wishlist
+userRouter.delete('/:id/wishlist', async (req, res) => {
+    try {
+        const userId = req.params.id;
+        const productId = req.body;
+        const wishlist = await wishSchema.findOne({ userId });
+        const deleted = await wishlist.deleteOne({ productId })
+
+        if (!deleted) {
+            res.status(400).json({ message: `this product is not available in your wishlist` })
+        }
+        res.status(200).json(`Product removed`);
+    } catch (error) {
+        res.status(400).json({ message: `server error ${error.message}` });
+    }
+
 })
 
 module.exports = userRouter;
