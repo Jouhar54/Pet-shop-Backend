@@ -1,8 +1,10 @@
 const express = require('express');
+const bcrypt = require('bcrypt')
 const userSchema = require('../models/userSchema');
 const productSchema = require('../models/productSchema');
 const cartSchema = require('../models/cartSchema');
 const wishSchema = require('../models/wishSchema');
+const { generateAccessToken } = require('../utils/jwt');
 
 const userRouter = express.Router();
 
@@ -10,6 +12,12 @@ userRouter.post('/register', async (req, res) => {
     try {
         const { username, email, password } = req.body;
 
+        const existingUser = await userSchema.findOne({email});
+
+        // Checking if user existed
+        if(existingUser){
+            return res.status(400).json({message:`You are already our family`});
+        }
         // Validating user credentials
         if (!username || !email || !password) {
             return res.status(400).json({ message: 'All field are required' })
@@ -18,13 +26,17 @@ userRouter.post('/register', async (req, res) => {
         // Validating email formate
         const emailFormate = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailFormate.test(email)) {
-            res.status(400).json({ message: 'Invalid email address' });
+            return res.status(400).json({ message: 'Invalid email address' });
         }
 
+        // hashing 
+        const hashedPassword = await bcrypt.hash(password, 10)
+
         // Saving the user
-        const user = await new userSchema({ username, email, password });
+        const user = new userSchema({ username, email, password:hashedPassword });
         user.save();
         return res.status(200).json({ message: 'Success' });
+
     } catch (error) {
         return res.status(400).json({ message: `Bad request:  ${error.message}` });
     }
@@ -33,8 +45,21 @@ userRouter.post('/register', async (req, res) => {
 userRouter.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body;
-        const login = await userSchema.find({ email, password })
-        return res.status(200).json(`Logged ${login}`);
+        const user = await userSchema.findOne({email})
+        if(!user){
+            return res.status(404).json({message:`Create a new account`});
+        }
+
+        // checking is the user real 
+        const validPassword = bcrypt.compare(password, user.password)
+        if(!validPassword){
+            return res.status(400).json({message:`Incorrect user name or password`});
+        }
+
+        // Token generation
+        const accessToken = generateAccessToken(user.id);
+
+        return res.status(200).json({username: user.username, accessToken});
     } catch (error) {
         console.log(error);
     }
@@ -59,6 +84,7 @@ userRouter.get('/products/:id', async (req, res) => {
         if (!productById) {
             res.status(400).json({ message: "product not available" });
         }
+
         res.status(200).json(productById);
     } catch (error) {
         res.status(400).json({ message: `${error.message}` });
@@ -166,7 +192,7 @@ userRouter.delete('/:id/wishlist', async (req, res) => {
         const userId = req.params.id;
         const productId = req.body;
         const wishlist = await wishSchema.findOne({ userId });
-        const deleted = await wishlist.deleteOne({ productId })
+        const deleted = await wishlist.deleteOne({ productId });
 
         if (!deleted) {
             res.status(400).json({ message: `this product is not available in your wishlist` })
