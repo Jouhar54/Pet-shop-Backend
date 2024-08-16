@@ -1,10 +1,11 @@
 const express = require('express');
-const bcrypt = require('bcrypt')
 const userSchema = require('../models/userSchema');
 const productSchema = require('../models/productSchema');
 const cartSchema = require('../models/cartSchema');
 const wishSchema = require('../models/wishSchema');
 const { generateAccessToken } = require('../utils/jwt');
+const {generateHashedPassword, comparePassword} = require('../utils/bcrypt');
+const checkAuth = require('../middleware/checkAuth');
 
 const userRouter = express.Router();
 
@@ -30,7 +31,7 @@ userRouter.post('/register', async (req, res) => {
         }
 
         // hashing 
-        const hashedPassword = await bcrypt.hash(password, 10)
+        const hashedPassword = await generateHashedPassword(password)
 
         // Saving the user
         const user = new userSchema({ username, email, password:hashedPassword });
@@ -51,7 +52,7 @@ userRouter.post('/login', async (req, res) => {
         }
 
         // checking is the user real 
-        const validPassword = bcrypt.compare(password, user.password)
+        const validPassword = comparePassword(password, user.password)
         if(!validPassword){
             return res.status(400).json({message:`Incorrect user name or password`});
         }
@@ -66,7 +67,7 @@ userRouter.post('/login', async (req, res) => {
 })
 
 // All products 
-userRouter.get('/products', async (req, res) => {
+userRouter.get('/products',checkAuth, async (req, res) => {
     try {
         const productsList = await productSchema.find();
         res.status(200).json(productsList);

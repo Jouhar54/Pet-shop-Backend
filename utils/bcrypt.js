@@ -1,5 +1,11 @@
 const bcrypt = require('bcrypt');
-const generateHashedPassword = async (password)=>{
-    return hashedPassword = await bcrypt.hash(password)
+
+const generateHashedPassword = (password)=>{
+    return hashedPassword = bcrypt.hash(password, 10)
 }
 
+const comparePassword = (password, userPassword)=>{
+    return comparedPassword = bcrypt.compare(password, userPassword)
+}
+
+module.exports = {generateHashedPassword, comparePassword};
