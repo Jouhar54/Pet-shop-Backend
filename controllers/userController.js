@@ -2,7 +2,7 @@ const { generateAccessToken } = require('../utils/jwt');
 const {generateHashedPassword, comparePassword} = require('../utils/bcrypt');
 const userSchema = require('../models/userSchema');
 
-// Signup controller 
+// Signup  
 const signUp = async (req, res) => {
     try {
         const { username, email, password } = req.body;
@@ -16,6 +16,10 @@ const signUp = async (req, res) => {
         // Validating user credentials
         if (!username || !email || !password) {
             return res.status(400).json({ message: 'All field are required' })
+        }
+
+        if (username.trim().length === 0 || password.trim().length === 0) {
+            return res.status(400).json({ message: 'Space only not valid' })
         }
 
         // Validating email formate
@@ -37,7 +41,7 @@ const signUp = async (req, res) => {
     }
 };
 
-// Login controller 
+// Login 
 const login = async (req, res) => {
     try {
         const { email, password } = req.body;

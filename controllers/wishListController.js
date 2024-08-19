@@ -20,7 +20,7 @@ const addToWish = async (req, res) => {
 
         await wishlist.save();
 
-        res.status(200).json(`Added ${wishlist}`)
+        res.status(200).json(wishlist)
     } catch (error) {
         res.status(400).json({ message: `Failed ${error.message}` })
     }
@@ -45,13 +45,17 @@ const allWishList = async (req, res) => {
 const deleteWish = async (req, res) => {
     try {
         const userId = req.params.id;
-        const productId = req.body;
-        const wishlist = await wishSchema.findOne({ userId });
-        const deleted = await wishlist.deleteOne({ productId });
+        const {productId} = req.body;
+        const updateWishlist = await wishSchema.findOneAndUpdate(
+            { userId },
+            {$pull:{products:{productId:productId}}},
+            {new:true}
+        );
 
-        if (!deleted) {
-            res.status(400).json({ message: `this product is not available in your wishlist` })
+        if(!updateWishlist){
+            return res.status(400).json({message:`This product is not in your wish list`})
         }
+        
         res.status(200).json(`Product removed`);
     } catch (error) {
         res.status(400).json({ message: `server error ${error.message}` });
