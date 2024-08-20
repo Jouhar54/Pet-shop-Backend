@@ -3,6 +3,8 @@ const cors = require('cors')
 const express = require('express');
 const connectDB = require('./config/db');
 const userRouter = require('./routes/userRouter');
+const router = require('./routes/adminRouter');
+
 const app = express();
 
 config();
@@ -14,7 +16,7 @@ app.use(express.json())
 
 app.use('/api/users', userRouter);
 
-
+app.use('/api/admin', router)
 
 const PORT = process.env.PORT || 3000 ;
 
