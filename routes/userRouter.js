@@ -4,6 +4,7 @@ const { signUp, login } = require('../controllers/userController');
 const { allProducts, productWithId, productWithCategory } = require('../controllers/productsController');
 const { addToCart, displayAllCart } = require('../controllers/cartController');
 const { addToWish, allWishList, deleteWish } = require('../controllers/wishListController');
+const { orderAItem } = require('../controllers/orderController');
 
 const userRouter = express.Router();
 
@@ -31,5 +32,7 @@ userRouter.get('/:id/wishlist', allWishList);
 
 // Deleting from wishlist
 userRouter.delete('/:id/wishlist', deleteWish);
+
+userRouter.post('/:id/orders', orderAItem);
 
 module.exports = userRouter;

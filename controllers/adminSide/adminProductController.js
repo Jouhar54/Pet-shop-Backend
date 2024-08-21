@@ -31,9 +31,15 @@ const adminProductWithId = async (req, res) => {
     }
 }
 
+// Add a product 
 const addProduct = async (req, res) => {
     try {
         const { title, price, category } = req.body;
+        const currentProducts = await productSchema.find();
+
+        if(currentProducts.map(item=> item.title === title)){
+            return res.status(500).json({message:`Product already there`});
+        }
 
         if (!title || !price || !category) {
             return res.status(500).json({ message: `All field required` });
@@ -51,6 +57,7 @@ const addProduct = async (req, res) => {
     }
 }
 
+// Edit a product 
 const editProduct = async (req, res) => {
     try {
         const productId = req.params.id;
@@ -68,6 +75,7 @@ const editProduct = async (req, res) => {
     }
 }
 
+// Delete a product 
 const deleteProduct = async (req, res) => {
     try {
         const productId = req.params.id;
