@@ -3,12 +3,14 @@ const { displayUsers, userWithId } = require('../controllers/adminSide/usersList
 const { adminAllProducts, adminProductWithId, addProduct, editProduct, deleteProduct } = require('../controllers/adminSide/adminProductController');
 const { displayOrders } = require('../controllers/adminSide/adminOrderController');
 const { status } = require('../controllers/adminSide/statusController');
+const { adminLogin } = require('../controllers/adminSide/adminLoginController');
+const checkAuth = require('../middleware/checkAuth');
 
 const router = express.Router();
 
-// router.post('/login', )
+router.post('/login', adminLogin)
 
-router.get('/users', displayUsers);
+router.get('/users', checkAuth, displayUsers);
 
 router.get('/users/:id', userWithId);
 

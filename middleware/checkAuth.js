@@ -5,15 +5,20 @@ const checkAuth = (req, res, next)=>{
         const token = req.headers.authorization;
 
     if(!token){
-        res.status(401).json({
+        return res.status(401).json({
             message: `Access denied`
         })
     }
 
     const tokenValid = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
+
+    if(!tokenValid){
+        return res.status(500).json({message:`Token not valid`});
+    }
+
     next()
     } catch (error) {
-        res.status(401).json(`You are unauthorized`);
+        res.status(401).json(error.message);
     }
 }
 
