@@ -1,3 +1,4 @@
+// const { productValidation } = require("../../middleware/joiValidation");
 const productSchema = require("../../models/productSchema");
 
 // display all products and category query also handling here
@@ -34,12 +35,9 @@ const adminProductWithId = async (req, res) => {
 // Add a product 
 const addProduct = async (req, res) => {
     try {
-        const { title, price, category } = req.body;
+        const {title, price, category} = req.body;
+        // const validatedProduct = await productValidation.validateAsync(req.body);
         const currentProducts = await productSchema.find();
-
-        if(currentProducts.map(item=> item.title === title)){
-            return res.status(500).json({message:`Product already there`});
-        }
 
         if (!title || !price || !category) {
             return res.status(500).json({ message: `All field required` });
@@ -48,11 +46,19 @@ const addProduct = async (req, res) => {
         if (title.trim().length === 0 || price.trim().length === 0 || category.trim().length === 0) {
             return res.status(400).json({ message: 'Space only not valid' })
         }
+        
+        const newProduct = new productSchema({
+            title,
+            price, 
+            category
+        });
 
-        const product = new productSchema({ title, price, category });
-        product.save();
+        await newProduct.save();
         res.status(200).json({ message: `Product added` });
     } catch (error) {
+        // if(error.isJoi === true){
+        //     return res.status(400).json(error.details)
+        // }
         res.status(500).json(error.message);
     }
 }

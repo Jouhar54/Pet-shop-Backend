@@ -12,7 +12,7 @@ router.post('/login', adminLogin)
 
 router.get('/users', checkAuth, displayUsers);
 
-router.get('/users/:id', userWithId);
+router.get('/users/:id',checkAuth, userWithId);
 
 router.get('/products', adminAllProducts);
 
