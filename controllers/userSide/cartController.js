@@ -1,4 +1,4 @@
-const cartSchema = require('../models/cartSchema');
+const cartSchema = require('../../models/cartSchema');
 
 // Add items to cart 
 const addToCart = async (req, res) => {

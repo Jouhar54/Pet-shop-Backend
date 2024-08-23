@@ -2,7 +2,7 @@ const express = require('express');
 const checkAuth = require('../middleware/checkAuth');
 const { signUp, login } = require('../controllers/userController');
 const { allProducts, productWithId, productWithCategory } = require('../controllers/productsController');
-const { addToCart, displayAllCart } = require('../controllers/cartController');
+const { addToCart, displayAllCart } = require('../controllers/userSide/cartController');
 const { addToWish, allWishList, deleteWish } = require('../controllers/wishListController');
 const { orderAItem } = require('../controllers/orderController');
 
