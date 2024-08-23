@@ -1,4 +1,4 @@
-const wishSchema = require('../models/wishSchema');
+const wishSchema = require('../../models/wishSchema');
 
 // Add to wish list 
 const addToWish = async (req, res) => {

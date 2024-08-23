@@ -1,4 +1,4 @@
-const orderSchema = require("../models/orderSchema");
+const orderSchema = require("../../models/orderSchema");
 
 // Order an item 
 const orderAItem = async (req, res) => {

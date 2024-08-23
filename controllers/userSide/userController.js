@@ -1,6 +1,6 @@
-const { generateAccessToken } = require('../utils/jwt');
-const {generateHashedPassword, comparePassword} = require('../utils/bcrypt');
-const userSchema = require('../models/userSchema');
+const userSchema = require('../../models/userSchema');
+const { generateHashedPassword, comparePassword } = require('../../utils/bcrypt');
+const { generateAccessToken } = require('../../utils/jwt');
 
 // Signup  
 const signUp = async (req, res) => {
