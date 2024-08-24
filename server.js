@@ -8,10 +8,10 @@ const router = require('./routes/adminRouter');
 const app = express();
 
 config();
-
 connectDB();
 
 app.use(cors());
+
 app.use(express.json())
 
 app.use('/api/users', userRouter);
