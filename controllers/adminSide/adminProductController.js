@@ -35,12 +35,16 @@ const adminProductWithId = async (req, res) => {
 // Add a product 
 const addProduct = async (req, res) => {
     try {
-        const { title } = req.body;
+        const { title, price, category } = req.body;
         const validatedProduct = await productValidation.validateAsync(req.body);
         const existProducts = await productSchema.findOne({title});
 
         if(existProducts){
             return res.status(500).json({message:`Product already existed ${title}`})
+        }
+
+        if(title.trim().length === 0 || category.trim().length === 0 ){
+            return res.status(500).json({message:`Spaces only not accepted`});
         }
         
         const newProduct = new productSchema(validatedProduct);
