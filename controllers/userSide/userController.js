@@ -72,10 +72,9 @@ const login = async (req, res) => {
 
     // Token generation
     const accessToken = generateAccessToken(user.id);
-
     res
       .status(200)
-      .json({ success: true, data: user.username, accessToken });
+      .json({ success: true, data: user, accessToken });
   } catch (error) {
     res
       .status(500)
