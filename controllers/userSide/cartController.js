@@ -6,7 +6,6 @@ const addToCart = async (req, res) => {
     const userId = req.params.id;
     const { _id, quantity } = req.body;
     let cart = await cartSchema.findOne({ userId });
-    console.log(req.body);
     if (!cart) {
       cart = new cartSchema({
         userId,
@@ -36,16 +35,35 @@ const displayAllCart = async (req, res) => {
   try {
     const userId = req.params.id;
     const cart = await cartSchema
-      .findOne({ userId })
-      .populate("products.productId");
-
+      .findOne({ userId }).populate('products._id')
     if (!cart) {
-      res.status(400).json({ message: `Cart not found` });
+      return res.status(400).json({ message: `Cart not found` });
     }
-    res.status(200).json(cart.products);
+    res.status(200).json({ success: true, message:`Cart fetched`, data:cart.products});
   } catch (error) {
     res.status(400).json({ message: `Fetching Failed ${error.message}` });
   }
 };
 
-module.exports = { addToCart, displayAllCart };
+// Delete from cart list 
+const deleteCart = async (req, res) => {
+  try {
+      const userId = req.params.id;
+      const {_id} = req.body;
+      const updatedCart = await cartSchema.findOneAndUpdate(
+          { userId },
+          {$pull:{products:{_id}}},
+          {new:true}
+      );
+
+      if(!updatedCart){
+          return res.status(400).json({message:`This product is not in your Cart`})
+      }
+      
+      res.status(200).json({success:true, message:`Product removed`, data:updatedCart});
+  } catch (error) {
+      res.status(400).json({success:false, message: `server error ${error.message}` });
+  }
+}
+
+module.exports = { addToCart, displayAllCart, deleteCart };

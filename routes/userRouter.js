@@ -2,7 +2,7 @@ const express = require('express');
 const checkAuth = require('../middleware/checkAuth');
 const { signUp, login } = require('../controllers/userSide/userController');
 const { allProducts, productWithId, productWithCategory } = require('../controllers/userSide/productsController');
-const { addToCart, displayAllCart } = require('../controllers/userSide/cartController');
+const { addToCart, displayAllCart, deleteCart } = require('../controllers/userSide/cartController');
 const { addToWish, allWishList, deleteWish } = require('../controllers/userSide/wishListController');
 const { orderAItem } = require('../controllers/userSide/orderController');
 
@@ -19,11 +19,10 @@ userRouter.get('/products/:id', productWithId);
 
 userRouter.get('/products/category/:id', productWithCategory);
 
-// Add to cart 
+// cart handlings
 userRouter.post('/:id/cart', addToCart);
-
-// Showing all cart 
-userRouter.get('/:id/cart', displayAllCart);;
+userRouter.get('/:id/cart', displayAllCart);
+userRouter.delete('/:id/cart', deleteCart);
 
 // Add to wish list 
 userRouter.post('/:id/wishlist', addToWish);
