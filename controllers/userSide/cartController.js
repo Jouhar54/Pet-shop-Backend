@@ -49,7 +49,7 @@ const displayAllCart = async (req, res) => {
 const deleteCart = async (req, res) => {
   try {
       const userId = req.params.id;
-      const {_id} = req.body;
+      const {_id} = await req.body;
       const updatedCart = await cartSchema.findOneAndUpdate(
           { userId },
           {$pull:{products:{_id}}},
