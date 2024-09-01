@@ -11,6 +11,7 @@ const addToCart = async (req, res) => {
         userId,
         products: [{ _id, quantity }],
       });
+      
     } else {
       const productIndex = cart.products.findIndex(
         (item) => item._id.toString() === _id

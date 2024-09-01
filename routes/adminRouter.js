@@ -14,18 +14,18 @@ router.get('/users', checkAuth, displayUsers);
 
 router.get('/users/:id',checkAuth, userWithId);
 
-router.get('/products', adminAllProducts);
+router.get('/products',checkAuth, adminAllProducts);
 
-router.get('/products/:id', adminProductWithId);
+router.get('/products/:id',checkAuth, adminProductWithId);
 
-router.post('/products', addProduct);
+router.post('/products',checkAuth, addProduct);
 
-router.put('/products/:id', editProduct);
+router.put('/products/:id',checkAuth, editProduct);
 
-router.delete('/products/:id', deleteProduct);
+router.delete('/products/:id',checkAuth, deleteProduct);
 
-router.get('/orders', displayOrders);
+router.get('/orders',checkAuth, displayOrders);
 
-router.get('/status', status);
+router.get('/status',checkAuth, status);
 
 module.exports = router;

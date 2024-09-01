@@ -9,30 +9,25 @@ const { orderAItem } = require('../controllers/userSide/orderController');
 
 const userRouter = express.Router();
 
+// Registration and Login
 userRouter.post('/register', signUp);
-
 userRouter.post('/login', login);
 
-userRouter.get('/products',checkAuth, allProducts);
-
+// Handling Products
+userRouter.get('/products', allProducts);
 userRouter.get('/products/:id', productWithId);
-
 userRouter.get('/products/category/:id', productWithCategory);
 
 // cart handlings
-userRouter.post('/:id/cart', addToCart);
-userRouter.get('/:id/cart', displayAllCart);
-userRouter.delete('/:id/cart', deleteCart);
+userRouter.post('/:id/cart',checkAuth, addToCart);
+userRouter.get('/:id/cart',checkAuth, displayAllCart);
+userRouter.delete('/:id/cart',checkAuth, deleteCart);
 
-// Add to wish list 
-userRouter.post('/:id/wishlist', addToWish);
+// Handling wish list 
+userRouter.post('/:id/wishlist',checkAuth, addToWish);
+userRouter.get('/:id/wishlist',checkAuth, allWishList);
+userRouter.delete('/:id/wishlist',checkAuth, deleteWish);
 
-// Show all wish list 
-userRouter.get('/:id/wishlist', allWishList);
-
-// Deleting from wishlist
-userRouter.delete('/:id/wishlist', deleteWish);
-
-userRouter.post('/:id/orders', orderAItem);
+userRouter.post('/:id/orders',checkAuth, orderAItem);
 
 module.exports = userRouter;
