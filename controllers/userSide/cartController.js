@@ -36,7 +36,10 @@ const displayAllCart = async (req, res) => {
   try {
     const userId = req.params.id;
     const cart = await cartSchema
-      .findOne({ userId }).populate('products._id')
+      .findOne({ userId }).populate({
+        path:'products._id',
+        model: 'Product'
+      })
     if (!cart) {
       return res.status(400).json({ message: `Cart not found` });
     }
