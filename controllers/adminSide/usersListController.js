@@ -25,6 +25,22 @@ const userWithId = async (req, res) =>{
     }
 }
 
+// Delete a User
+const deleteUser = async (req, res) => {
+    try {
+      const _id = req.params.id;
+      const deletedUserList = await userSchema.findByIdAndDelete({ _id });
+  
+      if (!deletedUserList) {
+        return res
+          .status(404)
+          .json({ success: false, message: `User nor found` });
+      }
+  
+      res.status(200).json({ success: true, message: `Removed user` });
+    } catch (error) {
+      res.status(500).json({ success: false, message: error.message });
+    }
+  };
 
-
-module.exports = {displayUsers, userWithId}
+module.exports = {displayUsers, userWithId, deleteUser}
