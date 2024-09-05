@@ -4,7 +4,7 @@ const { signUp, login } = require('../controllers/userSide/userController');
 const { allProducts, productWithId, productWithCategory } = require('../controllers/userSide/productsController');
 const { addToCart, displayAllCart, deleteCart } = require('../controllers/userSide/cartController');
 const { addToWish, allWishList, deleteWish } = require('../controllers/userSide/wishListController');
-const { orderAItem } = require('../controllers/userSide/orderController');
+const { payment } = require('../controllers/userSide/stripeController');
 
 
 const userRouter = express.Router();
@@ -28,6 +28,6 @@ userRouter.post('/:id/wishlist',checkAuth, addToWish);
 userRouter.get('/:id/wishlist',checkAuth, allWishList);
 userRouter.delete('/:id/wishlist',checkAuth, deleteWish);
 
-userRouter.post('/:id/orders',checkAuth, orderAItem);
+userRouter.post('/create-checkout-session',checkAuth, payment)
 
 module.exports = userRouter;
