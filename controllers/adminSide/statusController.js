@@ -4,7 +4,7 @@ const productSchema = require("../../models/productSchema");
 const status = async (req, res)=>{
     try {
         const totals = await orderSchema.find().populate({
-            path:'products.productId',
+            path:'products._id',
             model: 'Product'
         })
         .then(orders => {
