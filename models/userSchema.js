@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const { type } = require('os');
 
-const userLoginSchema = new mongoose.Schema({
+const userSchema = new mongoose.Schema({
     username:{
         type : String, 
         trim: true,
@@ -53,4 +53,4 @@ const userLoginSchema = new mongoose.Schema({
     timestamps : true,
 });
 
-module.exports = mongoose.model('User', userLoginSchema);
+module.exports = mongoose.model('User', userSchema);

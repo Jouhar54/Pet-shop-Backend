@@ -1,59 +1,70 @@
 const Stripe = require("stripe");
 const orderSchema = require("../../models/orderSchema");
 const cartSchema = require("../../models/cartSchema");
-const stripe = Stripe(
-  "sk_test_51PusIoCG06gOJ3clnNVDNPaFp0ajrMjldZGKFMcykqByQ98o1LEKj3eP3TcQ3QogU65aJjVaMm3ax22d1skG79t100COGlTV2d"
-);
+const userSchema = require("../../models/userSchema");
+const mongoose = require("mongoose");
+require("dotenv").config();
+
+const stripeKey = process.env.STRIPE_SECRET_KEY;
+
+const stripe = new Stripe(stripeKey);
 
 const payment = async (req, res) => {
   try {
-    const { cartItems, email } = req.body;
+    const { email, userId } = req.body;
+    const cartItems = await cartSchema
+    .findOne({ userId }).populate({
+      path:'products._id',
+      model: 'Product'
+    })
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
-      line_items: cartItems.map((item) => ({
+      line_items: cartItems.products.map((item) => ({
         price_data: {
           currency: "inr",
           product_data: {
-            name: item.name,
-            images: [item.imageSrc],
+            name: item._id.name,
+            images: [item._id.imageSrc],
           },
-          unit_amount: item.price * 100,
+          unit_amount: item._id.price * 100,
         },
-        quantity: item.quantity,
+        quantity: item._id.quantity,
       })),
       mode: "payment",
-      success_url: `http://localhost:5173/`,
+      success_url: `http://localhost:5173/success`,
       cancel_url: `http://localhost:5173/cancel`,
       customer_email: email,
     });
 
-    res.json({ id: session.id });
-  } catch (error) {
-    res.status(500).json({ message: error });
-  }
-};
+    if (!session) {
+      return res.status(400).json({
+        status: "fail",
+        message: "Error on session side",
+      });
+    }
 
-const orderAdding = async (req, res) => {
-  const { paymentIntentId, userId, cartItems } = req.body;
-
-  const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
-
-  if (paymentIntent.status === "succeeded") {
-    const newOrder = new orderSchema({
+    const completeOrder = new orderSchema({
       userId,
-      products: cartItems,
-      totalPrice: paymentIntent.amount,
-      paymentStatus: "Completed",
+      products: cartItems.products.map((item) =>({
+        productId: item._id._id,
+        quantity: item.quantity,
+      })),
+      order_id: session.id,
+      payment_id: userId+Date.now(),
+      total_amount: session.amount_total / 100,
+      status: "Success",
     });
+    await completeOrder.save();
 
-    await newOrder.save();
-    res.status(201).json({ success: true, order: newOrder });
+    if(completeOrder){
+      await cartSchema.deleteOne({userId});
+    }
 
-    await cartSchema.findOneAndUpdate({ userId }, { $set: { products: [] } });
-  } else {
-    res.status(400).json({ success: false, message: "Payment failed" });
+    res.json({ status: "success", url: session.url, id: session.id });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 };
 
-module.exports = { payment, orderAdding };
+module.exports = { payment };

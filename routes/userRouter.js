@@ -29,5 +29,7 @@ userRouter.get('/:id/wishlist',checkAuth, allWishList);
 userRouter.delete('/:id/wishlist',checkAuth, deleteWish);
 
 userRouter.post('/create-checkout-session',checkAuth, payment)
+// userRouter.get('/success',checkAuth, successPayment)
+// userRouter.post('/webhook', express.raw({ type: 'application/json' }), handleWebhook);
 
 module.exports = userRouter;
