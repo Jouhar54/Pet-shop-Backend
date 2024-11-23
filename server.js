@@ -5,6 +5,7 @@ const connectDB = require('./config/db');
 const userRouter = require('./routes/userRouter');
 const router = require('./routes/adminRouter');
 const rateLimit = require('express-rate-limit');
+const helmet = require("helmet");
 
 const app = express();
 
@@ -20,6 +21,7 @@ config();
 connectDB();
 
 app.use(apiLimiter);
+app.use(helmet());
 app.use(cors());
 app.use(express.json())
 
